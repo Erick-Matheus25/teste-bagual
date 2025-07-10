@@ -1,0 +1,218 @@
+body {
+    font-family: 'VT323', monospace;
+    color: #000000;
+    background-image: url('https://static.vecteezy.com/ti/vetor-gratis/p1/42818355-8-bits-pixel-grafico-azul-ceu-fundo-com-nuvens-vetor.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    margin: 0;
+    padding: 0;
+}
+
+
+
+
+@keyframes pulse {
+  0%, 100% {
+    box-shadow: 0 0 5px #00f2ff, 0 0 10px #00f2ff, 0 0 15px #00f2ff;
+  }
+  50% {
+    box-shadow: 0 0 15px #00f2ff, 0 0 25px #00f2ff, 0 0 35px #00f2ff;
+  }
+}
+
+
+@keyframes pix-blink {
+  0%, 100% {
+    box-shadow:
+      0 0 4px  rgba(10, 10, 10, 0.6),
+      0 0 8px  rgba(12, 12, 12, 0.4);
+  }
+  50% {
+    box-shadow:
+      0 0 12px rgba(0, 209, 209, 0.9),
+      0 0 20px rgba(0, 209, 199, 0.7);
+  }
+}
+.pixel-button {
+      font-family: 'VT323', monospace;
+      display: block;
+      margin: 30px auto;
+      padding: 12px 30px;
+      font-size: 20px;
+      background-color: #00D167;
+      color: #000;
+      border: 3px solid #000;
+      border-radius: 8px;
+      cursor: pointer;
+      animation: pix-blink 1.8s infinite ease-in-out;
+      transition: transform 0.3s ease,
+        background-color 0.3s ease,
+        color 0.3s ease,
+        border-color 0.3s ease;
+    }
+
+
+    .pixel-button:hover {
+      background-color: #fff;
+      color: #00D167;
+      border-color: #00D167;
+      transform: scale(1.05);
+    }
+
+
+
+
+
+
+
+
+.card {
+    max-width: 800px;
+    margin: 20px auto;
+    background-color: rgba(252, 249, 249, 0.986);
+    padding: 30px;
+    border-radius: 20px;
+    color: #070606;
+    border: 2px solid #131616;
+    transition: 0.4s;
+    box-shadow: 0 0 10px #00ffff40;
+}
+
+
+.card:hover {
+    box-shadow:
+        0 0 10px  #00ffff,
+        0 0 20px #00ffff,
+        0 0 40px #00ffff,
+        0 0 60px #00ffff;
+    transform: scale(1.02);
+    border-color: #fcfcfc;
+}
+
+
+
+
+h1 {
+    text-align: center;
+    font-size: 36px;
+    margin-bottom: 20px;
+}
+
+
+h2 {
+    margin-top: 20px;
+    color: #000000;
+}
+
+
+h3 {
+    font-weight: normal;
+    line-height: 1.5;
+}
+
+
+
+
+button {
+  font-family: 'VT323', monospace;
+  display: block;
+  margin: 30px auto;
+  padding: 12px 30px;
+  font-size: 20px;
+  color: #000;
+  background-color: #00f2ff;
+  border: 3px solid #000;
+  border-radius: 8px;
+  cursor: pointer;
+  animation: pulse 1.8s infinite ease-in-out;
+  transition: transform 0.3s ease, background-color 0.3s, color 0.3s, border-color 0.3s;
+ 
+}
+
+
+button:hover {
+  background-color: #fff;
+  color: #00ccff;
+  border-color: #00ccff;
+  transform: scale(1.05);
+}
+
+
+
+
+footer {
+    text-align: center;
+    padding: 20px;
+    color: rgb(17, 16, 16);
+}
+
+
+
+
+.navbar {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  background-color: #0f0f0f;
+  overflow: hidden;
+  display: flex;
+}
+
+
+.navbar li {
+  flex: 1;
+}
+
+
+.navbar li a {
+  display: block;
+  color: white;
+  text-align: center;
+  padding: 14px;
+  text-decoration: none;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  margin: 6px;
+  transition: all 0.3s ease;
+}
+
+
+.navbar li a:hover {
+  background-color: #000000;
+  border-color: #00f0ff;
+  box-shadow: 0 0 10px #00f0ff, 0 0 20px #00f0ff;
+}
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0; }
+}
+
+
+
+
+.blinking-button {
+  animation: blink 1s infinite;
+}
+ @keyframes pix-blink {
+
+
+      0%,
+      100% {
+        box-shadow:
+          0 0 4px rgba(0, 209, 103, 0.6),
+          0 0 8px rgba(0, 209, 103, 0.4);
+      }
+
+
+      50% {
+        box-shadow:
+          0 0 12px rgba(0, 209, 103, 0.9),
+          0 0 20px rgba(0, 209, 103, 0.7);
+      }
+    }
+   @media (min-width: 768px) {
+  .container {
+    max-width: 750px;
+    margin: 0 auto;
+  }
+}
