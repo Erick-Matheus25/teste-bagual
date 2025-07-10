@@ -28,6 +28,7 @@ let lastPlatformTouched = null;
 let gameOver = false;
 let gameOverText, restartButton;
 let highScore = 0;
+let nextPlatformY = 400;
 
 function preload() {
   this.load.image('background', 'assets/fundo.png');
@@ -38,17 +39,15 @@ function preload() {
 }
 
 function create() {
-  // Carrega recorde salvo
   highScore = localStorage.getItem('crazyTowerHighScore') || 0;
 
-  // Fundo
   this.add.tileSprite(0, 0, 800, 6000, 'background').setOrigin(0).setScrollFactor(0);
 
   platforms = this.physics.add.staticGroup();
   powerups = this.physics.add.group();
 
   // Plataforma inicial
-  platforms.create(200, 550, 'platform');
+  platforms.create(200, 550, 'platform').refreshBody();
 
   // Jogador
   player = this.physics.add.sprite(200, 500, 'player').setScale(1);
@@ -60,9 +59,12 @@ function create() {
   for (let i = 0; i < 8; i++) {
     let x = Phaser.Math.Between(50, 300);
     let plat = platforms.create(x, y, 'platform');
+    plat.refreshBody(); // Garantir que seja estático
     if (Math.random() < 0.3) spawnPowerup(this, x + 30, y - 30);
-    y -= Phaser.Math.Between(70, 100);
+    y -= Phaser.Math.Between(40, 55); // Espaçamento mais curto
   }
+
+  nextPlatformY = y;
 
   this.physics.add.collider(player, platforms, platformTouched, null, this);
   this.physics.add.overlap(player, powerups, collectPowerup, null, this);
@@ -85,7 +87,8 @@ function create() {
 
   gameOverText = this.add.text(200, 280, '', {
     font: '30px Consolas',
-    fill: '#ff0000'
+    fill: '#ff0000',
+    align: 'center'
   }).setOrigin(0.5).setScrollFactor(0).setDepth(999).setVisible(false);
 
   restartButton = this.add.image(200, 340, 'button')
@@ -104,6 +107,7 @@ function create() {
 function update() {
   if (gameOver) return;
 
+  // Movimento
   if (cursors.left.isDown) {
     player.setVelocityX(-200);
   } else if (cursors.right.isDown) {
@@ -112,35 +116,39 @@ function update() {
     player.setVelocityX(0);
   }
 
+  // Pulo
   if ((cursors.up.isDown || spaceKey.isDown) && player.body.blocked.down) {
-    const jumpForce = poweredUp ? -600 : -450;
+    const jumpForce = poweredUp ? -600 : -500;
     player.setVelocityY(jumpForce);
   }
 
-  // Morte se cair fora da tela
+  // Game over se cair da tela
   const bottomLimit = this.cameras.main.scrollY + 600;
   if (player.y > bottomLimit) {
     triggerGameOver(this);
   }
 
-  // Atualizar pontuação
-  if (player.y < maxY) {
-    maxY = player.y;
+  // Atualiza altura máxima
+  if (player.y < maxY) maxY = player.y;
+
+  // Geração infinita de plataformas (não depende do jogador)
+  const camTop = this.cameras.main.scrollY - 100;
+
+  while (nextPlatformY > camTop) {
+    const x = Phaser.Math.Between(50, 300);
+    const plat = platforms.create(x, nextPlatformY, 'platform');
+    plat.refreshBody(); // Impede que ela caia
+
+    if (Math.random() < 0.3) spawnPowerup(this, x + 30, nextPlatformY - 30);
+
+    nextPlatformY -= Phaser.Math.Between(40, 55); // Espaçamento ajustado
   }
 
-  // Geração infinita de plataformas
-  const highest = platforms.getChildren().reduce((min, p) => Math.min(min, p.y), Infinity);
-  if (player.y < highest - 150) {
-    const newY = highest - Phaser.Math.Between(70, 100);
-    const newX = Phaser.Math.Between(50, 300);
-    let plat = platforms.create(newX, newY, 'platform');
-    if (Math.random() < 0.3) spawnPowerup(this, newX + 30, newY - 30);
-  }
-
-  // Limpeza
+  // Limpeza de objetos fora da tela
   platforms.getChildren().forEach((plat) => {
     if (plat.y > this.cameras.main.scrollY + 700) plat.destroy();
   });
+
   powerups.getChildren().forEach((pwr) => {
     if (pwr.y > this.cameras.main.scrollY + 700) pwr.destroy();
   });
@@ -162,11 +170,10 @@ function triggerGameOver(scene) {
   player.setVelocity(0, 0);
   player.body.enable = false;
 
-  gameOverText.setText('Você perdeu!');
+  gameOverText.setText(`Você perdeu!\nPontuação: ${score}`);
   gameOverText.setVisible(true);
   restartButton.setVisible(true);
 
-  // Atualizar recorde
   if (score > highScore) {
     highScore = score;
     localStorage.setItem('crazyTowerHighScore', highScore);
