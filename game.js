@@ -2,6 +2,10 @@ const config = {
     type: Phaser.AUTO,
     width: 400,
     height: 600,
+    scale: {
+        mode: Phaser.Scale.FIT,
+        autoCenter: Phaser.Scale.CENTER_BOTH
+    },
     physics: {
         default: 'arcade',
         arcade: {
@@ -59,9 +63,9 @@ function create() {
     for (let i = 0; i < 8; i++) {
         let x = Phaser.Math.Between(50, 300);
         let plat = platforms.create(x, y, 'platform');
-        plat.refreshBody(); // Garantir que seja estático
+        plat.refreshBody();
         if (Math.random() < 0.3) spawnPowerup(this, x + 30, y - 30);
-        y -= Phaser.Math.Between(40, 55); // Espaçamento mais curto
+        y -= Phaser.Math.Between(40, 55);
     }
 
     nextPlatformY = y;
@@ -73,7 +77,7 @@ function create() {
     spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
 
     this.cameras.main.startFollow(player);
-    this.cameras.main.setBounds(0, -6000, 400, 6600);
+    this.cameras.main.setBounds(0, -6000, config.width, 6600);
 
     scoreText = this.add.text(10, 10, 'Pontuação: 0', {
         font: '20px Consolas',
@@ -102,12 +106,16 @@ function create() {
         this.scene.restart();
         resetGameState();
     });
+
+    // Removido listener de resize, pois Phaser.Scale.FIT cuida disso
+    // window.addEventListener('resize', () => {
+    //     game.scale.resize(window.innerWidth, window.innerHeight);
+    // });
 }
 
 function update() {
     if (gameOver) return;
 
-    // Movimento
     if (cursors.left.isDown) {
         player.setVelocityX(-200);
     } else if (cursors.right.isDown) {
@@ -116,41 +124,36 @@ function update() {
         player.setVelocityX(0);
     }
 
-    // Pulo
     if ((cursors.up.isDown || spaceKey.isDown) && player.body.blocked.down) {
         const jumpForce = poweredUp ? -600 : -500;
         player.setVelocityY(jumpForce);
     }
 
-    // Game over se cair da tela
-    const bottomLimit = this.cameras.main.scrollY + 600;
+    const bottomLimit = this.cameras.main.scrollY + config.height;
     if (player.y > bottomLimit) {
         triggerGameOver(this);
     }
 
-    // Atualiza altura máxima
     if (player.y < maxY) maxY = player.y;
 
-    // Geração infinita de plataformas (não depende do jogador)
     const camTop = this.cameras.main.scrollY - 100;
 
     while (nextPlatformY > camTop) {
         const x = Phaser.Math.Between(50, 300);
         const plat = platforms.create(x, nextPlatformY, 'platform');
-        plat.refreshBody(); // Impede que ela caia
+        plat.refreshBody();
 
         if (Math.random() < 0.3) spawnPowerup(this, x + 30, nextPlatformY - 30);
 
-        nextPlatformY -= Phaser.Math.Between(40, 55); // Espaçamento ajustado
+        nextPlatformY -= Phaser.Math.Between(40, 55);
     }
 
-    // Limpeza de objetos fora da tela
     platforms.getChildren().forEach((plat) => {
-        if (plat.y > this.cameras.main.scrollY + 700) plat.destroy();
+        if (plat.y > this.cameras.main.scrollY + config.height + 100) plat.destroy();
     });
 
     powerups.getChildren().forEach((pwr) => {
-        if (pwr.y > this.cameras.main.scrollY + 700) pwr.destroy();
+        if (pwr.y > this.cameras.main.scrollY + config.height + 100) pwr.destroy();
     });
 }
 
